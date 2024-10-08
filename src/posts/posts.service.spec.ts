@@ -6,7 +6,14 @@ import { Post } from './entities/post.entity';
 describe('PostsService', () => {
   let service: PostsService;
 
-  const mockPostsRepository = {};
+  const mockPostsRepository = {
+    create: jest.fn().mockImplementation((dto) => dto),
+    save: jest
+      .fn()
+      .mockImplementation((user) =>
+        Promise.resolve({ id: Date.now(), ...user }),
+      ),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,5 +31,16 @@ describe('PostsService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should create a new post and return that', async () => {
+    expect(
+      await service.create({
+        title: 'Vasanth',
+      }),
+    ).toEqual({
+      id: expect.any(Number),
+      title: 'Vasanth',
+    });
   });
 });
